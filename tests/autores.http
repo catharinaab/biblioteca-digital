@@ -1,47 +1,66 @@
-
-### Cadastrar autor
-POST http://localhost:3000/autores
-Content-Type: application/json
-
-{
-    "nome": "Jorge Amado",
-    "nacionalidade": "Brasileira",
-    "ano_nascimento": 1912
-}
-
-### Atualizar autor (substitua 5 pelo ID retornado)
-PUT http://localhost:3000/autores/6
-Content-Type: application/json
-
-{
-    "nome": "Jorge Amado",
-    "nacionalidade": "Brasileira",
-    "ano_nascimento": 1912
-}
-
-### Tentar cadastrar autor sem nome
-POST http://localhost:3000/autores
-Content-Type: application/json
-
-{
-    "nome": "",
-    "nacionalidade": "Brasileira",
-    "ano_nascimento": 1912
-}
-
-### Listar autores
+### 1. Listar todos os autores
 GET http://localhost:3000/autores
 
-### Excluir autor
-DELETE http://localhost:3000/autores/7
 
-### Verificar autor excluído
-GET http://localhost:3000/autores/7
+### 2. Buscar autor pelo ID
+GET http://localhost:3000/autores/1
 
 
+### 3. Cadastrar autor
+POST http://localhost:3000/autores
+Content-Type: application/json
+
+{
+    "nome": "Jorge Amado",
+    "nacionalidade": "Brasileira",
+    "ano_nascimento": 1912
+}
+
+
+### 4. Atualizar autor
+### Substitua número pelo ID retornado no cadastro
+PUT http://localhost:3000/autores/10
+Content-Type: application/json
+
+{
+    "nome": "Jorge Amado",
+    "nacionalidade": "Brasileira",
+    "ano_nascimento": 1912
+}
+
+
+### 5. Excluir autor
+### Substitua o número pelo ID retornado no cadastro
+DELETE http://localhost:3000/autores/10
+
+
+### 6. Verificar se o autor foi excluído
+GET http://localhost:3000/autores/10
+
+
+### ==========================================
+### RELACIONAMENTO ENTRE AUTORES E LIVROS
+### ==========================================
+
+### 7. Listar livros de um autor
+GET http://localhost:3000/autores/1/livros
+
+
+### 8. Listar livros de um autor sem livros
+GET http://localhost:3000/autores/6/livros
+
+
+### 9. Buscar livros de autor inexistente
+GET http://localhost:3000/autores/999/livros
+
+
+### ==========================================
+### CENÁRIOS DE ERRO
+### ==========================================
 
 ### ERRO 1 - Buscar autor inexistente
 GET http://localhost:3000/autores/999
+
 
 ### ERRO 2 - Cadastrar autor sem nome
 POST http://localhost:3000/autores
@@ -53,30 +72,22 @@ Content-Type: application/json
     "ano_nascimento": 1912
 }
 
+
 ### ERRO 3 - Excluir autor que possui livros
 DELETE http://localhost:3000/autores/1
 
-### ERRO 4 - Buscar com ID inválido
+
+### ERRO 4 - Buscar autor com ID inválido
 GET http://localhost:3000/autores/abc
 
 
+### ==========================================
+### ROTAS GERAIS DA API
+### ==========================================
+
+### 10. Verificar rota inicial
+GET http://localhost:3000/
 
 
-### Listar livros de um autor
-GET http://localhost:3000/autores/1/livros
-
-### Listar livros de um autor sem livros
-GET http://localhost:3000/autores/6/livros
-
-### Buscar livros de autor inexistente
-GET http://localhost:3000/autores/999/livros
-
-
-### Listar livros de Machado de Assis
-GET http://localhost:3000/autores/1/livros
-
-### Listar livros de autor sem livros
-GET http://localhost:3000/autores/6/livros
-
-### Buscar livros de autor inexistente
-GET http://localhost:3000/autores/999/livros
+### 11. Verificar rota inexistente (404)
+GET http://localhost:3000/rota-inexistente

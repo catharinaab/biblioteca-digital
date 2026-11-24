@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ### Atualizar livro
-PUT http://localhost:3000/livros/1
+PUT http://localhost:3000/livros/10
 Content-Type: application/json
 
 {
@@ -28,7 +28,7 @@ Content-Type: application/json
 }
 
 ### Excluir livro
-DELETE http://localhost:3000/livros/1
+DELETE http://localhost:3000/livros/10  
 
 
 

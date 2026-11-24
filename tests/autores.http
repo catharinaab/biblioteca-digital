@@ -1,0 +1,63 @@
+
+### Cadastrar autor
+POST http://localhost:3000/autores
+Content-Type: application/json
+
+{
+    "nome": "Jorge Amado",
+    "nacionalidade": "Brasileira",
+    "ano_nascimento": 1912
+}
+
+### Atualizar autor (substitua 5 pelo ID retornado)
+PUT http://localhost:3000/autores/6
+Content-Type: application/json
+
+{
+    "nome": "Jorge Amado",
+    "nacionalidade": "Brasileira",
+    "ano_nascimento": 1912
+}
+
+### Tentar cadastrar autor sem nome
+POST http://localhost:3000/autores
+Content-Type: application/json
+
+{
+    "nome": "",
+    "nacionalidade": "Brasileira",
+    "ano_nascimento": 1912
+}
+
+### Listar autores
+GET http://localhost:3000/autores
+
+### Tentar buscar autor inexistente
+GET http://localhost:3000/autores/999
+
+### Excluir autor
+DELETE http://localhost:3000/autores/7
+
+### Verificar autor excluído
+GET http://localhost:3000/autores/7
+
+
+
+### ERRO 1 - Buscar autor inexistente
+GET http://localhost:3000/autores/999
+
+### ERRO 2 - Cadastrar autor sem nome
+POST http://localhost:3000/autores
+Content-Type: application/json
+
+{
+    "nome": "",
+    "nacionalidade": "Brasileira",
+    "ano_nascimento": 1912
+}
+
+### ERRO 3 - Excluir autor que possui livros
+DELETE http://localhost:3000/autores/1
+
+### ERRO 4 - Buscar com ID inválido
+GET http://localhost:3000/autores/abc

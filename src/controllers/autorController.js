@@ -2,7 +2,7 @@
 import * as Autor from "../models/autorModel.js";
 
 // Validar os dados recebidos
-function validarAutor(dados) {
+function validarAutor(dados = {}) {
     const { nome, nacionalidade, ano_nascimento } = dados;
 
     if (

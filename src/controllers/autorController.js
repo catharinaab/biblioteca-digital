@@ -1,5 +1,6 @@
 
 import * as Autor from "../models/autorModel.js";
+import * as Livro from "../models/livroModel.js";
 
 // Validar os dados recebidos
 function validarAutor(dados = {}) {
@@ -162,3 +163,37 @@ export async function excluir(req, res, next) {
         next(error);
     }
 }
+
+
+// Listar livros de um autor
+export async function listarLivros(req, res, next) {
+    try {
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({
+                erro: "ID inválido."
+            });
+        }
+
+        const autor = await Autor.buscarAutorPorId(id);
+
+        if (!autor) {
+            return res.status(404).json({
+                erro: "Autor não encontrado."
+            });
+        }
+
+        const livros = await Livro.listarLivrosPorAutor(id);
+
+        return res.status(200).json({
+            autor: autor.nome,
+            total_livros: livros.length,
+            livros
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+

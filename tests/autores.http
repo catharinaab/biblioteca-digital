@@ -32,9 +32,6 @@ Content-Type: application/json
 ### Listar autores
 GET http://localhost:3000/autores
 
-### Tentar buscar autor inexistente
-GET http://localhost:3000/autores/999
-
 ### Excluir autor
 DELETE http://localhost:3000/autores/7
 
@@ -61,3 +58,25 @@ DELETE http://localhost:3000/autores/1
 
 ### ERRO 4 - Buscar com ID inválido
 GET http://localhost:3000/autores/abc
+
+
+
+
+### Listar livros de um autor
+GET http://localhost:3000/autores/1/livros
+
+### Listar livros de um autor sem livros
+GET http://localhost:3000/autores/6/livros
+
+### Buscar livros de autor inexistente
+GET http://localhost:3000/autores/999/livros
+
+
+### Listar livros de Machado de Assis
+GET http://localhost:3000/autores/1/livros
+
+### Listar livros de autor sem livros
+GET http://localhost:3000/autores/6/livros
+
+### Buscar livros de autor inexistente
+GET http://localhost:3000/autores/999/livros

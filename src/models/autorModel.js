@@ -8,7 +8,7 @@ export async function listarAutores() {
     );
 }
 
-// Buscar autor pelo ID
+// Buscar um autor pelo ID
 export async function buscarAutorPorId(id) {
     return await db.get(
         "SELECT * FROM autores WHERE id = ?",
@@ -16,7 +16,7 @@ export async function buscarAutorPorId(id) {
     );
 }
 
-// Cadastrar autor
+// Cadastrar um novo autor
 export async function criarAutor(autor) {
     const resultado = await db.run(
         `INSERT INTO autores
@@ -32,7 +32,7 @@ export async function criarAutor(autor) {
     return await buscarAutorPorId(resultado.lastID);
 }
 
-// Atualizar autor
+// Atualizar um autor
 export async function atualizarAutor(id, autor) {
     return await db.run(
         `UPDATE autores
@@ -59,7 +59,7 @@ export async function possuiLivros(id) {
     return resultado.total > 0;
 }
 
-// Excluir autor
+// Excluir um autor
 export async function excluirAutor(id) {
     return await db.run(
         "DELETE FROM autores WHERE id = ?",

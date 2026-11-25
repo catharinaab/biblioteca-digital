@@ -31,6 +31,24 @@ Content-Type: application/json
 DELETE http://localhost:3000/livros/10  
 
 
+### FILTRO 1 - Buscar livros de fantasia
+GET http://localhost:3000/livros?genero=Fantasia
+
+### FILTRO 2 - Buscar livros de romance
+GET http://localhost:3000/livros?genero=Romance
+
+### FILTRO 3 - Buscar gênero inexistente
+GET http://localhost:3000/livros?genero=Suspense
+
+### ERRO - Parâmetro vazio
+GET http://localhost:3000/livros?genero=
+
+
+
+
+### ==========================================
+### CENÁRIOS DE ERRO
+### ==========================================
 
 
 ### ERRO 1 - Buscar livro inexistente
@@ -71,16 +89,3 @@ Content-Type: application/json
     "genero": "Fantasia",
     "autor_id": 1
 }
-
-
-### FILTRO 1 - Buscar livros de fantasia
-GET http://localhost:3000/livros?genero=Fantasia
-
-### FILTRO 2 - Buscar livros de romance
-GET http://localhost:3000/livros?genero=Romance
-
-### FILTRO 3 - Buscar gênero inexistente
-GET http://localhost:3000/livros?genero=Suspense
-
-### ERRO - Parâmetro vazio
-GET http://localhost:3000/livros?genero=

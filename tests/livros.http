@@ -2,8 +2,10 @@
 ### Listar todos os livros
 GET http://localhost:3000/livros
 
+
 ### Buscar livro pelo ID
 GET http://localhost:3000/livros/1
+
 
 ### Cadastrar livro
 POST http://localhost:3000/livros
@@ -16,6 +18,7 @@ Content-Type: application/json
     "autor_id": 1
 }
 
+
 ### Atualizar livro
 PUT http://localhost:3000/livros/10
 Content-Type: application/json
@@ -27,23 +30,29 @@ Content-Type: application/json
     "autor_id": 1
 }
 
+
 ### Excluir livro
 DELETE http://localhost:3000/livros/10  
 
 
-### FILTRO 1 - Buscar livros de fantasia
+### ==========================================
+### SEPARAÇÃO POR GENÊRO
+### ==========================================
+
+### FILTRO - Buscar livros de fantasia
 GET http://localhost:3000/livros?genero=Fantasia
 
-### FILTRO 2 - Buscar livros de romance
+
+### FILTRO - Buscar livros de romance
 GET http://localhost:3000/livros?genero=Romance
 
-### FILTRO 3 - Buscar gênero inexistente
+
+### FILTRO - Buscar gênero inexistente
 GET http://localhost:3000/livros?genero=Suspense
+
 
 ### ERRO - Parâmetro vazio
 GET http://localhost:3000/livros?genero=
-
-
 
 
 ### ==========================================
@@ -51,13 +60,15 @@ GET http://localhost:3000/livros?genero=
 ### ==========================================
 
 
-### ERRO 1 - Buscar livro inexistente
+### ERRO - Buscar livro inexistente
 GET http://localhost:3000/livros/999
 
-### ERRO 2 - Buscar livro com ID inválido
+
+### ERRO - Buscar livro com ID inválido
 GET http://localhost:3000/livros/abc
 
-### ERRO 3 - Cadastrar livro sem título
+
+### ERRO - Cadastrar livro sem título
 POST http://localhost:3000/livros
 Content-Type: application/json
 
@@ -68,7 +79,8 @@ Content-Type: application/json
     "autor_id": 1
 }
 
-### ERRO 4 - Cadastrar livro com autor inexistente
+
+### ERRO - Cadastrar livro com autor inexistente
 POST http://localhost:3000/livros
 Content-Type: application/json
 
@@ -79,7 +91,8 @@ Content-Type: application/json
     "autor_id": 999
 }
 
-### ERRO 5 - Cadastrar livro com ano inválido
+
+### ERRO - Cadastrar livro com ano inválido
 POST http://localhost:3000/livros
 Content-Type: application/json
 

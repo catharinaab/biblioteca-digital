@@ -4,10 +4,19 @@ import express from "express";
 import autorRoutes from "./routes/autorRoutes.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import livroRoutes from "./routes/livroRoutes.js";
+import usuarioRoutes from "./routes/usuarioRoutes.js";
+import helmet from "helmet";
+import cors from "cors";
 
 const app = express();
 
-// Permite receber dados em JSON
+
+app.use(helmet());
+
+app.use(cors({
+    origin: process.env.CORS_ORIGIN
+}));
+
 app.use(express.json());
 
 // Rota inicial
@@ -17,9 +26,10 @@ app.get("/", (req, res) => {
     });
 });
 
-// Rotas de autores
+// Rotas de autores, livros e usuários
 app.use("/autores", autorRoutes);
 app.use("/livros", livroRoutes);
+app.use("/usuarios", usuarioRoutes);
 
 // Tratamento de rotas inexistentes
 app.use((req, res, next) => {

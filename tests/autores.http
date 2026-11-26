@@ -19,7 +19,7 @@ Content-Type: application/json
 
 ### Atualizar autor
 ### Substituir número pelo ID retornado no cadastro
-PUT http://localhost:3000/autores/11
+PUT http://localhost:3000/autores/12
 Content-Type: application/json
 
 {
@@ -31,11 +31,11 @@ Content-Type: application/json
 
 ### Excluir autor
 ### Substituir o número pelo ID retornado no cadastro
-DELETE http://localhost:3000/autores/11
+DELETE http://localhost:3000/autores/12
 
 
 ### Verificar se o autor foi excluído
-GET http://localhost:3000/autores/11
+GET http://localhost:3000/autores/12
 
 
 ### ==========================================
@@ -91,3 +91,21 @@ GET http://localhost:3000/
 
 ### Verificar rota inexistente (404)
 GET http://localhost:3000/rota-inexistente
+
+
+
+### Cadastrar autor com usuário autenticado
+POST http://localhost:3000/autores
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxOTc0NywiZXhwIjoxNzk1NzIzMzQ3fQ.CwGiPGuKMg-NEY9-FMvA_hh7PV58yFj6ipqTzr-a0BI
+Content-Type: application/json
+
+{
+    "nome": "Clarisse Lispector",
+    "nacionalidade": "Brasileira",
+    "ano_nascimento": 1912
+}
+
+
+### Listar autores do usuário autenticado
+GET http://localhost:3000/autores
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcyMDQ0MiwiZXhwIjoxNzk1NzI0MDQyfQ.pS0LZUfjW9g-vTGKueqDa9rWZmq_yMiZ4bPzalYBUms

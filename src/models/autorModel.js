@@ -1,50 +1,73 @@
 
 import db from "../config/database.js";
 
-// Listar todos os autores
-export async function listarAutores() {
-    return await db.all(
-        "SELECT * FROM autores ORDER BY id"
+// Listar autores.
+// Administrador: todos os autores.
+// Usuário comum: somente seus autores.
+export async function listarAutores(usuarioId = null) {
+    if (usuarioId === null) {
+        return db.all(
+            "SELECT * FROM autores ORDER BY id"
+        );
+    }
+
+    return db.all(
+        "SELECT * FROM autores WHERE usuario_id = ? ORDER BY id",
+        [usuarioId]
     );
 }
 
 // Buscar um autor pelo ID
 export async function buscarAutorPorId(id) {
-    return await db.get(
+    return db.get(
         "SELECT * FROM autores WHERE id = ?",
         [id]
     );
 }
 
-// Cadastrar um novo autor
+// Cadastrar autor vinculado ao usuário
 export async function criarAutor(autor) {
     const resultado = await db.run(
         `INSERT INTO autores
-        (nome, nacionalidade, ano_nascimento)
-        VALUES (?, ?, ?)`,
-        [
-            autor.nome,
-            autor.nacionalidade,
-            autor.ano_nascimento
-        ]
-    );
-
-    return await buscarAutorPorId(resultado.lastID);
-}
-
-// Atualizar um autor
-export async function atualizarAutor(id, autor) {
-    return await db.run(
-        `UPDATE autores
-        SET nome = ?,
-            nacionalidade = ?,
-            ano_nascimento = ?
-        WHERE id = ?`,
+        (nome, nacionalidade, ano_nascimento, usuario_id)
+        VALUES (?, ?, ?, ?)`,
         [
             autor.nome,
             autor.nacionalidade,
             autor.ano_nascimento,
-            id
+            autor.usuario_id
+        ]
+    );
+
+    return buscarAutorPorId(resultado.lastID);
+}
+
+// Atualizar autor
+export async function atualizarAutor(id, autor, usuarioId = null) {
+    if (usuarioId === null) {
+        return db.run(
+            `UPDATE autores
+             SET nome = ?, nacionalidade = ?, ano_nascimento = ?
+             WHERE id = ?`,
+            [
+                autor.nome,
+                autor.nacionalidade,
+                autor.ano_nascimento,
+                id
+            ]
+        );
+    }
+
+    return db.run(
+        `UPDATE autores
+         SET nome = ?, nacionalidade = ?, ano_nascimento = ?
+         WHERE id = ? AND usuario_id = ?`,
+        [
+            autor.nome,
+            autor.nacionalidade,
+            autor.ano_nascimento,
+            id,
+            usuarioId
         ]
     );
 }
@@ -59,10 +82,17 @@ export async function possuiLivros(id) {
     return resultado.total > 0;
 }
 
-// Excluir um autor
-export async function excluirAutor(id) {
-    return await db.run(
-        "DELETE FROM autores WHERE id = ?",
-        [id]
+// Excluir autor
+export async function excluirAutor(id, usuarioId = null) {
+    if (usuarioId === null) {
+        return db.run(
+            "DELETE FROM autores WHERE id = ?",
+            [id]
+        );
+    }
+
+    return db.run(
+        "DELETE FROM autores WHERE id = ? AND usuario_id = ?",
+        [id, usuarioId]
     );
 }

@@ -10,7 +10,11 @@ import {
     listarLivros
 } from "../controllers/autorController.js";
 
+import { autenticar } from "../middlewares/autenticar.js";
+
 const router = Router();
+
+router.use(autenticar);
 
 router.get("/", listar);
 router.get("/:id/livros", listarLivros);

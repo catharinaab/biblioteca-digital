@@ -9,7 +9,11 @@ import {
     excluir
 } from "../controllers/livroController.js";
 
+import { autenticar } from "../middlewares/autenticar.js";
+
 const router = Router();
+
+router.use(autenticar);
 
 // Listar todos os livros
 router.get("/", listar);

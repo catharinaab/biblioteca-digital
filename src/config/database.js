@@ -15,13 +15,11 @@ const dbPath = resolve(
     "biblioteca.db"
 );
 
-// Abrindo a conexão com o banco
 const db = await open({
     filename: dbPath,
     driver: sqlite3.Database
 });
 
-// Habilitando chaves estrangeiras
 await db.exec("PRAGMA foreign_keys = ON");
 
 export default db;

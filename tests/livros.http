@@ -102,3 +102,56 @@ Content-Type: application/json
     "genero": "Fantasia",
     "autor_id": 1
 }
+
+
+
+### Cadastrar livro vinculado ao usuário
+POST http://localhost:3000/livros
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcyMDQ0MiwiZXhwIjoxNzk1NzI0MDQyfQ.pS0LZUfjW9g-vTGKueqDa9rWZmq_yMiZ4bPzalYBUms
+Content-Type: application/json
+
+{
+    "titulo": "Dom Casmurro",
+    "ano_publicacao": 1899,
+    "genero": "Romance",
+    "autor_id": 14
+}
+
+
+### Listar livros do segundo usuário
+GET http://localhost:3000/livros
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxOTc0NywiZXhwIjoxNzk1NzIzMzQ3fQ.CwGiPGuKMg-NEY9-FMvA_hh7PV58yFj6ipqTzr-a0BI
+
+
+### Usuário 2 tentando acessar livro do Usuário 1
+GET http://localhost:3000/livros/12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxOTc0NywiZXhwIjoxNzk1NzIzMzQ3fQ.CwGiPGuKMg-NEY9-FMvA_hh7PV58yFj6ipqTzr-a0BI
+
+
+
+### Usuário 2 tentando atualizar livro do Usuário 1
+PUT http://localhost:3000/livros/12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxOTc0NywiZXhwIjoxNzk1NzIzMzQ3fQ.CwGiPGuKMg-NEY9-FMvA_hh7PV58yFj6ipqTzr-a0BI
+Content-Type: application/json
+
+{
+    "titulo": "Livro alterado indevidamente",
+    "ano_publicacao": 1899,
+    "genero": "Romance",
+    "autor_id": 14
+}
+
+
+### Usuário 2 tentando excluir livro do Usuário 1
+DELETE http://localhost:3000/livros/12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxOTc0NywiZXhwIjoxNzk1NzIzMzQ3fQ.CwGiPGuKMg-NEY9-FMvA_hh7PV58yFj6ipqTzr-a0BI
+
+
+### Usuário 1 verificando se o livro continua existindo
+GET http://localhost:3000/livros/12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcyMDc0NiwiZXhwIjoxNzk1NzI0MzQ2fQ.0JNCr6Yb_U9uFog-nw4mVIS0R1t4tNreEXtcqcJrKGw
+
+
+### Listar livros de um autor
+GET http://localhost:3000/autores/14/livros
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcyMDc0NiwiZXhwIjoxNzk1NzI0MzQ2fQ.0JNCr6Yb_U9uFog-nw4mVIS0R1t4tNreEXtcqcJrKGw

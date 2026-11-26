@@ -2,6 +2,45 @@
 import * as Livro from "../models/livroModel.js";
 import * as Autor from "../models/autorModel.js";
 
+// Administrador não precisa de filtro por proprietário.
+function obterUsuarioId(req) {
+    return req.usuario.perfil === "admin"
+        ? null
+        : req.usuario.id;
+}
+
+// Verificar se o registro pertence ao usuário.
+function verificarPropriedade(req, res, registro, tipo) {
+    if (
+        req.usuario.perfil !== "admin" &&
+        registro.usuario_id !== req.usuario.id
+    ) {
+        res.status(403).json({
+            erro: `Você não tem permissão para acessar este ${tipo}.`
+        });
+
+        return false;
+    }
+
+    return true;
+}
+
+// Verificar se o autor pertence ao usuário.
+function verificarPropriedadeAutor(req, res, autor) {
+    if (
+        req.usuario.perfil !== "admin" &&
+        autor.usuario_id !== req.usuario.id
+    ) {
+        res.status(403).json({
+            erro: "Você não tem permissão para utilizar este autor."
+        });
+
+        return false;
+    }
+
+    return true;
+}
+
 // Validar os dados recebidos
 function validarLivro(dados = {}) {
     const {
@@ -34,13 +73,12 @@ function validarLivro(dados = {}) {
     return null;
 }
 
-// Listar todos os livros
-
+// GET /livros
 export async function listar(req, res, next) {
     try {
+        const usuarioId = obterUsuarioId(req);
         const { genero } = req.query;
 
-        // Se houver filtro por gênero
         if (genero !== undefined) {
             if (
                 typeof genero !== "string" ||
@@ -52,14 +90,14 @@ export async function listar(req, res, next) {
             }
 
             const livros = await Livro.filtrarLivrosPorGenero(
-                genero.trim()
+                genero.trim(),
+                usuarioId
             );
 
             return res.status(200).json(livros);
         }
 
-        // Se não houver filtro, listar todos
-        const livros = await Livro.listarLivros();
+        const livros = await Livro.listarLivros(usuarioId);
 
         return res.status(200).json(livros);
     } catch (error) {
@@ -67,20 +105,27 @@ export async function listar(req, res, next) {
     }
 }
 
-
-// Buscar livro pelo ID
+// GET /livros/:id
 export async function buscarPorId(req, res, next) {
     try {
         const id = Number(req.params.id);
 
         if (!Number.isInteger(id) || id <= 0) {
-            return res.status(400).json({ erro: "ID inválido." });
+            return res.status(400).json({
+                erro: "ID inválido."
+            });
         }
 
         const livro = await Livro.buscarLivroPorId(id);
 
         if (!livro) {
-            return res.status(404).json({ erro: "Livro não encontrado." });
+            return res.status(404).json({
+                erro: "Livro não encontrado."
+            });
+        }
+
+        if (!verificarPropriedade(req, res, livro, "livro")) {
+            return;
         }
 
         return res.status(200).json(livro);
@@ -89,7 +134,7 @@ export async function buscarPorId(req, res, next) {
     }
 }
 
-// Cadastrar livro
+// POST /livros
 export async function criar(req, res, next) {
     try {
         const erro = validarLivro(req.body);
@@ -106,10 +151,15 @@ export async function criar(req, res, next) {
             });
         }
 
+        if (!verificarPropriedadeAutor(req, res, autor)) {
+            return;
+        }
+
         const livro = await Livro.criarLivro({
             ...req.body,
             titulo: req.body.titulo.trim(),
-            genero: req.body.genero.trim()
+            genero: req.body.genero.trim(),
+            usuario_id: req.usuario.id
         });
 
         return res.status(201).json(livro);
@@ -118,19 +168,27 @@ export async function criar(req, res, next) {
     }
 }
 
-// Atualizar livro
+// PUT /livros/:id
 export async function atualizar(req, res, next) {
     try {
         const id = Number(req.params.id);
 
         if (!Number.isInteger(id) || id <= 0) {
-            return res.status(400).json({ erro: "ID inválido." });
+            return res.status(400).json({
+                erro: "ID inválido."
+            });
         }
 
         const livroExistente = await Livro.buscarLivroPorId(id);
 
         if (!livroExistente) {
-            return res.status(404).json({ erro: "Livro não encontrado." });
+            return res.status(404).json({
+                erro: "Livro não encontrado."
+            });
+        }
+
+        if (!verificarPropriedade(req, res, livroExistente, "livro")) {
+            return;
         }
 
         const erro = validarLivro(req.body);
@@ -147,11 +205,21 @@ export async function atualizar(req, res, next) {
             });
         }
 
-        await Livro.atualizarLivro(id, {
-            ...req.body,
-            titulo: req.body.titulo.trim(),
-            genero: req.body.genero.trim()
-        });
+        if (!verificarPropriedadeAutor(req, res, autor)) {
+            return;
+        }
+
+        const usuarioId = obterUsuarioId(req);
+
+        await Livro.atualizarLivro(
+            id,
+            {
+                ...req.body,
+                titulo: req.body.titulo.trim(),
+                genero: req.body.genero.trim()
+            },
+            usuarioId
+        );
 
         const livroAtualizado = await Livro.buscarLivroPorId(id);
 
@@ -161,22 +229,32 @@ export async function atualizar(req, res, next) {
     }
 }
 
-// Excluir livro
+// DELETE /livros/:id
 export async function excluir(req, res, next) {
     try {
         const id = Number(req.params.id);
 
         if (!Number.isInteger(id) || id <= 0) {
-            return res.status(400).json({ erro: "ID inválido." });
+            return res.status(400).json({
+                erro: "ID inválido."
+            });
         }
 
         const livro = await Livro.buscarLivroPorId(id);
 
         if (!livro) {
-            return res.status(404).json({ erro: "Livro não encontrado." });
+            return res.status(404).json({
+                erro: "Livro não encontrado."
+            });
         }
 
-        await Livro.excluirLivro(id);
+        if (!verificarPropriedade(req, res, livro, "livro")) {
+            return;
+        }
+
+        const usuarioId = obterUsuarioId(req);
+
+        await Livro.excluirLivro(id, usuarioId);
 
         return res.status(204).send();
     } catch (error) {

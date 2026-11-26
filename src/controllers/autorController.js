@@ -2,6 +2,29 @@
 import * as Autor from "../models/autorModel.js";
 import * as Livro from "../models/livroModel.js";
 
+// Administrador não precisa de filtro por proprietário.
+function obterUsuarioId(req) {
+    return req.usuario.perfil === "admin"
+        ? null
+        : req.usuario.id;
+}
+
+// Verifica se o autor pertence ao usuário autenticado.
+function verificarPropriedade(req, res, autor) {
+    if (
+        req.usuario.perfil !== "admin" &&
+        autor.usuario_id !== req.usuario.id
+    ) {
+        res.status(403).json({
+            erro: "Você não tem permissão para acessar este autor."
+        });
+
+        return false;
+    }
+
+    return true;
+}
+
 // Validar os dados recebidos
 function validarAutor(dados = {}) {
     const { nome, nacionalidade, ano_nascimento } = dados;
@@ -34,7 +57,8 @@ function validarAutor(dados = {}) {
 // GET /autores
 export async function listar(req, res, next) {
     try {
-        const autores = await Autor.listarAutores();
+        const usuarioId = obterUsuarioId(req);
+        const autores = await Autor.listarAutores(usuarioId);
 
         return res.status(200).json(autores);
     } catch (error) {
@@ -61,6 +85,10 @@ export async function buscarPorId(req, res, next) {
             });
         }
 
+        if (!verificarPropriedade(req, res, autor)) {
+            return;
+        }
+
         return res.status(200).json(autor);
     } catch (error) {
         next(error);
@@ -73,15 +101,14 @@ export async function criar(req, res, next) {
         const erro = validarAutor(req.body);
 
         if (erro) {
-            return res.status(400).json({
-                erro
-            });
+            return res.status(400).json({ erro });
         }
 
         const autor = await Autor.criarAutor({
             ...req.body,
             nome: req.body.nome.trim(),
-            nacionalidade: req.body.nacionalidade.trim()
+            nacionalidade: req.body.nacionalidade.trim(),
+            usuario_id: req.usuario.id
         });
 
         return res.status(201).json(autor);
@@ -109,19 +136,27 @@ export async function atualizar(req, res, next) {
             });
         }
 
+        if (!verificarPropriedade(req, res, autorExistente)) {
+            return;
+        }
+
         const erro = validarAutor(req.body);
 
         if (erro) {
-            return res.status(400).json({
-                erro
-            });
+            return res.status(400).json({ erro });
         }
 
-        await Autor.atualizarAutor(id, {
-            ...req.body,
-            nome: req.body.nome.trim(),
-            nacionalidade: req.body.nacionalidade.trim()
-        });
+        const usuarioId = obterUsuarioId(req);
+
+        await Autor.atualizarAutor(
+            id,
+            {
+                ...req.body,
+                nome: req.body.nome.trim(),
+                nacionalidade: req.body.nacionalidade.trim()
+            },
+            usuarioId
+        );
 
         const autorAtualizado = await Autor.buscarAutorPorId(id);
 
@@ -150,13 +185,19 @@ export async function excluir(req, res, next) {
             });
         }
 
+        if (!verificarPropriedade(req, res, autor)) {
+            return;
+        }
+
         if (await Autor.possuiLivros(id)) {
             return res.status(400).json({
                 erro: "Não é possível excluir um autor que possui livros cadastrados."
             });
         }
 
-        await Autor.excluirAutor(id);
+        const usuarioId = obterUsuarioId(req);
+
+        await Autor.excluirAutor(id, usuarioId);
 
         return res.status(204).send();
     } catch (error) {
@@ -164,8 +205,7 @@ export async function excluir(req, res, next) {
     }
 }
 
-
-// Listar livros de um autor
+// GET /autores/:id/livros
 export async function listarLivros(req, res, next) {
     try {
         const id = Number(req.params.id);
@@ -184,7 +224,14 @@ export async function listarLivros(req, res, next) {
             });
         }
 
-        const livros = await Livro.listarLivrosPorAutor(id);
+        if (!verificarPropriedade(req, res, autor)) {
+            return;
+        }
+
+        const livros = await Livro.listarLivrosPorAutor(
+    id,
+    obterUsuarioId(req)
+);
 
         return res.status(200).json({
             autor: autor.nome,
@@ -195,5 +242,3 @@ export async function listarLivros(req, res, next) {
         next(error);
     }
 }
-
-

@@ -20,6 +20,12 @@ const seed = readFileSync(
     "utf-8"
 );
 
+const usuarios = await db.get(
+    "SELECT COUNT(*) AS total FROM usuarios"
+);
+
+console.log(`Usuários cadastrados: ${usuarios.total}`);
+
 try {
     // Criando as tabelas
     await db.exec(schema);

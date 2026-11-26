@@ -1,4 +1,3 @@
-
 import { Router } from "express";
 import { autenticar } from "../middlewares/autenticar.js";
 import { autorizar } from "../middlewares/autorizar.js";

@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL CHECK(length(trim(nome)) > 0),

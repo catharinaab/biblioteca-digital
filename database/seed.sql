@@ -1,4 +1,3 @@
-
 -- Inserindo autores
 INSERT INTO autores (nome, nacionalidade, ano_nascimento)
 VALUES

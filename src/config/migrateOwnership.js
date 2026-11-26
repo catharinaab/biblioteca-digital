@@ -1,4 +1,3 @@
-
 import db from "./database.js";
 
 async function adicionarColunaUsuario(tabela) {

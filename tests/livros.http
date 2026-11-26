@@ -1,87 +1,116 @@
+@baseUrl = http://localhost:3000
 
-### Listar todos os livros
-GET http://localhost:3000/livros
+@tokenUsuario1 = COLE_TOKEN_DO_USUARIO_1_AQUI
+@tokenUsuario2 = COLE_TOKEN_DO_USUARIO_2_AQUI
+@tokenAdmin = COLE_O_TOKEN_DO_ADMIN__AQUI
 
+
+### ==========================================
+### LIVROS - CONSULTAS
+### ==========================================
+
+### Listar livros do usuário
+GET {{baseUrl}}/livros
+Authorization: Bearer {{tokenUsuario1}}
 
 ### Buscar livro pelo ID
-GET http://localhost:3000/livros/1
+### Utilize o ID de um livro do usuário
+GET {{baseUrl}}/livros/00
+Authorization: Bearer {{tokenUsuario1}}
 
+### Administrador listando todos os livros
+GET {{baseUrl}}/livros
+Authorization: Bearer {{tokenAdmin}}
+
+### ==========================================
+### LIVROS - CADASTRO E ALTERAÇÃO
+### ==========================================
 
 ### Cadastrar livro
-POST http://localhost:3000/livros
+### O autor informado precisa pertencer ao usuário
+POST {{baseUrl}}/livros
+Authorization: Bearer {{tokenUsuario1}}
 Content-Type: application/json
 
 {
     "titulo": "Capitaes da Areia",
     "ano_publicacao": 1937,
     "genero": "Romance",
-    "autor_id": 1
+    "autor_id": 14
 }
 
-
 ### Atualizar livro
-PUT http://localhost:3000/livros/10
+### Substitua 00 pelo ID de um livro do usuário
+PUT {{baseUrl}}/livros/00
+Authorization: Bearer {{tokenUsuario1}}
 Content-Type: application/json
 
 {
     "titulo": "Capitaes da Areia - Edicao Atualizada",
     "ano_publicacao": 1937,
     "genero": "Romance",
-    "autor_id": 1
+    "autor_id": 14
 }
 
-
 ### Excluir livro
-DELETE http://localhost:3000/livros/10  
+### Utilize um livro do usuário que possa ser excluído
+DELETE {{baseUrl}}/livros/00
+Authorization: Bearer {{tokenUsuario1}}
+
+### Verificar se o livro foi excluído (esperado: 404)
+GET {{baseUrl}}/livros/00
+Authorization: Bearer {{tokenUsuario1}}
 
 
 ### ==========================================
-### SEPARAÇÃO POR GENÊRO
+### FILTROS POR GENERO
 ### ==========================================
 
-### FILTRO - Buscar livros de fantasia
-GET http://localhost:3000/livros?genero=Fantasia
+### Buscar livros de fantasia
+GET {{baseUrl}}/livros?genero=Fantasia
+Authorization: Bearer {{tokenUsuario1}}
 
+### Buscar livros de romance
+GET {{baseUrl}}/livros?genero=Romance
+Authorization: Bearer {{tokenUsuario1}}
 
-### FILTRO - Buscar livros de romance
-GET http://localhost:3000/livros?genero=Romance
+### Buscar gênero inexistente (esperado: lista vazia)
+GET {{baseUrl}}/livros?genero=Suspense
+Authorization: Bearer {{tokenUsuario1}}
 
-
-### FILTRO - Buscar gênero inexistente
-GET http://localhost:3000/livros?genero=Suspense
-
-
-### ERRO - Parâmetro vazio
-GET http://localhost:3000/livros?genero=
+### Parâmetro vazio (verificar comportamento da validação)
+GET {{baseUrl}}/livros?genero=
+Authorization: Bearer {{tokenUsuario1}}
 
 
 ### ==========================================
-### CENÁRIOS DE ERRO
+### CENARIOS DE ERRO
 ### ==========================================
 
 
-### ERRO - Buscar livro inexistente
-GET http://localhost:3000/livros/999
+### Buscar livro inexistente (esperado: 404)
+GET {{baseUrl}}/livros/999
+Authorization: Bearer {{tokenUsuario1}}
 
+### Buscar livro com ID inválido (esperado: 400)
+GET {{baseUrl}}/livros/abc
+Authorization: Bearer {{tokenUsuario1}}
 
-### ERRO - Buscar livro com ID inválido
-GET http://localhost:3000/livros/abc
-
-
-### ERRO - Cadastrar livro sem título
-POST http://localhost:3000/livros
+### Cadastrar livro sem título (esperado: 400)
+POST {{baseUrl}}/livros
+Authorization: Bearer {{tokenUsuario1}}
 Content-Type: application/json
 
 {
     "titulo": "",
     "ano_publicacao": 1937,
     "genero": "Romance",
-    "autor_id": 1
+    "autor_id": 14
 }
 
-
-### ERRO - Cadastrar livro com autor inexistente
-POST http://localhost:3000/livros
+### Cadastrar livro com autor inexistente (esperado: 404)
+POST {{baseUrl}}/livros
+Authorization: Bearer {{tokenUsuario1}}
 Content-Type: application/json
 
 {
@@ -91,47 +120,54 @@ Content-Type: application/json
     "autor_id": 999
 }
 
-
-### ERRO - Cadastrar livro com ano inválido
-POST http://localhost:3000/livros
+### Cadastrar livro com ano inválido (esperado: 400)
+POST {{baseUrl}}/livros
+Authorization: Bearer {{tokenUsuario1}}
 Content-Type: application/json
 
 {
     "titulo": "Livro de teste",
     "ano_publicacao": 3000,
     "genero": "Fantasia",
-    "autor_id": 1
-}
-
-
-
-### Cadastrar livro vinculado ao usuário
-POST http://localhost:3000/livros
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcyMDQ0MiwiZXhwIjoxNzk1NzI0MDQyfQ.pS0LZUfjW9g-vTGKueqDa9rWZmq_yMiZ4bPzalYBUms
-Content-Type: application/json
-
-{
-    "titulo": "Dom Casmurro",
-    "ano_publicacao": 1899,
-    "genero": "Romance",
     "autor_id": 14
 }
 
 
-### Listar livros do segundo usuário
-GET http://localhost:3000/livros
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxOTc0NywiZXhwIjoxNzk1NzIzMzQ3fQ.CwGiPGuKMg-NEY9-FMvA_hh7PV58yFj6ipqTzr-a0BI
+### ==========================================
+### AUTENTICACAO
+### ==========================================
+
+### Listar livros sem token (esperado: 401)
+GET {{baseUrl}}/livros
+
+### Cadastrar livro sem token (esperado: 401)
+POST {{baseUrl}}/livros
+Content-Type: application/json
+
+{
+    "titulo": "Livro sem autenticação",
+    "ano_publicacao": 2020,
+    "genero": "Fantasia",
+    "autor_id": 14
+}
 
 
-### Usuário 2 tentando acessar livro do Usuário 1
-GET http://localhost:3000/livros/12
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxOTc0NywiZXhwIjoxNzk1NzIzMzQ3fQ.CwGiPGuKMg-NEY9-FMvA_hh7PV58yFj6ipqTzr-a0BI
+### ==========================================
+### PROPRIEDADE E AUTORIZACAO
+### ==========================================
 
+### Listar livros do usuário 2
+### Deve mostrar somente os livros pertencentes ao usuário 2
+GET {{baseUrl}}/livros
+Authorization: Bearer {{tokenUsuario2}}
 
+### Usuário 2 tentando acessar livro do usuário 1 (esperado: 403)
+GET {{baseUrl}}/livros/12
+Authorization: Bearer {{tokenUsuario2}}
 
-### Usuário 2 tentando atualizar livro do Usuário 1
-PUT http://localhost:3000/livros/12
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxOTc0NywiZXhwIjoxNzk1NzIzMzQ3fQ.CwGiPGuKMg-NEY9-FMvA_hh7PV58yFj6ipqTzr-a0BI
+### Usuário 2 tentando atualizar livro do usuário 1 (esperado: 403)
+PUT {{baseUrl}}/livros/12
+Authorization: Bearer {{tokenUsuario2}}
 Content-Type: application/json
 
 {
@@ -141,17 +177,10 @@ Content-Type: application/json
     "autor_id": 14
 }
 
+### Usuário 2 tentando excluir livro do usuário 1 (esperado: 403)
+DELETE {{baseUrl}}/livros/12
+Authorization: Bearer {{tokenUsuario2}}
 
-### Usuário 2 tentando excluir livro do Usuário 1
-DELETE http://localhost:3000/livros/12
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxOTc0NywiZXhwIjoxNzk1NzIzMzQ3fQ.CwGiPGuKMg-NEY9-FMvA_hh7PV58yFj6ipqTzr-a0BI
-
-
-### Usuário 1 verificando se o livro continua existindo
-GET http://localhost:3000/livros/12
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcyMDc0NiwiZXhwIjoxNzk1NzI0MzQ2fQ.0JNCr6Yb_U9uFog-nw4mVIS0R1t4tNreEXtcqcJrKGw
-
-
-### Listar livros de um autor
-GET http://localhost:3000/autores/14/livros
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcyMDc0NiwiZXhwIjoxNzk1NzI0MzQ2fQ.0JNCr6Yb_U9uFog-nw4mVIS0R1t4tNreEXtcqcJrKGw
+### Usuário 1 verificando se o livro continua existindo (esperado: 200)
+GET {{baseUrl}}/livros/12
+Authorization: Bearer {{tokenUsuario1}}

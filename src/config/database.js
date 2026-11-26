@@ -1,4 +1,3 @@
-
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { resolve, dirname } from "node:path";
@@ -9,7 +8,7 @@ const projectRoot = resolve(
     "../.."
 );
 
-const dbPath = resolve(
+const dbPath = process.env.DB_PATH || resolve(
     projectRoot,
     "database",
     "biblioteca.db"

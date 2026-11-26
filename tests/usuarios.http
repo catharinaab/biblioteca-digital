@@ -1,26 +1,40 @@
+@baseUrl = http://localhost:3000
+@token = COLE_O_TOKEN_ATUAL_AQUI
+@tokenAdmin = COLE_O_TOKEN_DO_ADMIN__AQUI
+
+### ==========================================
+### CADASTRO DE USUÁRIOS
+### ==========================================
+
+
 ### Cadastrar usuário
-POST http://localhost:3000/usuarios/cadastro
+POST {{baseUrl}}/usuarios/cadastro
 Content-Type: application/json
 
 {
     "nome": "Usuário Teste",
-    "email": "teste@biblioteca.com",
-    "senha": "senha123"
+    "email": "teste2@biblioteca.com",
+    "senha": "senha1234"
 }
 
-### Tentar cadastrar o mesmo e-mail novamente
-POST http://localhost:3000/usuarios/cadastro
+
+### Tentar cadastrar o mesmo e-mail novamente (esperado: 409)
+POST {{baseUrl}}/usuarios/cadastro
 Content-Type: application/json
 
 {
     "nome": "Outro Usuário",
-    "email": "teste2@biblioteca.com",
+    "email": "teste@biblioteca.com",
     "senha": "outrasenha123"
 }
 
+### ==========================================
+### LOGIN
+### ==========================================
+
 
 ### Login com credenciais corretas
-POST http://localhost:3000/usuarios/login
+POST {{baseUrl}}/usuarios/login
 Content-Type: application/json
 
 {
@@ -28,17 +42,18 @@ Content-Type: application/json
     "senha": "senha123"
 }
 
-### Login com senha incorreta
-POST http://localhost:3000/usuarios/login
+### Login com senha incorreta (esperado: 401)
+POST {{baseUrl}}/usuarios/login
 Content-Type: application/json
 
 {
-    "email": "teste2@biblioteca.com",
+    "email": "teste@biblioteca.com",
     "senha": "senhaerrada"
 }
 
-### Login com usuário inexistente
-POST http://localhost:3000/usuarios/login
+
+### Login com usuário inexistente (esperado: 401)
+POST {{baseUrl}}/usuarios/login
 Content-Type: application/json
 
 {
@@ -47,15 +62,33 @@ Content-Type: application/json
 }
 
 
-### Acessar perfil sem token (esperado: 401)
-GET http://localhost:3000/usuarios/perfil
-
-### Acessar perfil com token
-### Substitua SEU_TOKEN pelo token recebido no login
-GET http://localhost:3000/usuarios/perfil
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcyMDQ0MiwiZXhwIjoxNzk1NzI0MDQyfQ.pS0LZUfjW9g-vTGKueqDa9rWZmq_yMiZ4bPzalYBUms
-
+### ==========================================
+### LOGIN DO ADMIN
+### ==========================================
 
 ### Acessar rota administrativa
-GET http://localhost:3000/usuarios/admin
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxNzE2OCwiZXhwIjoxNzk1NzIwNzY4fQ.Q4n04Ozpbt71it1gisTyl5znbNvOLm4y_pA72QjfxKU
+GET {{baseUrl}}/usuarios/admin
+Authorization: Bearer {{tokenAdmin}}
+
+
+### ==========================================
+### AUTENTICAÇÃO
+### ==========================================
+
+### Acessar perfil sem token (esperado: 401)
+GET {{baseUrl}}/usuarios/perfil
+
+
+### Acessar perfil com token (esperado: 200)
+GET {{baseUrl}}/usuarios/perfil
+Authorization: Bearer {{token}}
+
+
+### ==========================================
+### AUTORIZAÇÃO
+### ==========================================
+
+
+### Acessar rota administrativa (esperado: 403)
+GET {{baseUrl}}/usuarios/admin
+Authorization: Bearer {{token}}

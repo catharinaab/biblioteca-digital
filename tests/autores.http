@@ -1,13 +1,45 @@
+@baseUrl = http://localhost:3000
+@token = COLE_O_TOKEN_ATUAL_AQUI
+@tokenAdmin = COLE_O_TOKEN_DO_ADMIN__AQUI
+
+### ==========================================
+### ROTAS GERAIS DA API
+### ==========================================
+
+### Verificar rota inicial
+GET {{baseUrl}}/
+
+### Verificar rota inexistente (404)
+GET {{baseUrl}}/rota-inexistente
+
+
+### ==========================================
+### AUTORES - CONSULTAS
+### ==========================================
+
 ### Listar todos os autores
-GET http://localhost:3000/autores
+GET {{baseUrl}}/autores
+Authorization: Bearer {{token}}
 
 
 ### Buscar autor pelo ID
-GET http://localhost:3000/autores/1
+### Utilize o ID de um autor seu
+GET {{baseUrl}}/autores/14
+Authorization: Bearer {{token}}
 
+
+### Administrador listando todos os autores
+GET {{baseUrl}}/autores
+Authorization: Bearer {{tokenAdmin}}
+
+
+### ==========================================
+### AUTORES - CADASTRO E ALTERAÇÃO
+### ==========================================
 
 ### Cadastrar autor
-POST http://localhost:3000/autores
+POST {{baseUrl}}/autores
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -18,8 +50,9 @@ Content-Type: application/json
 
 
 ### Atualizar autor
-### Substituir número pelo ID retornado no cadastro
-PUT http://localhost:3000/autores/12
+### Substitua 00 pelo ID de um autor seu
+PUT {{baseUrl}}/autores/14
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -30,12 +63,15 @@ Content-Type: application/json
 
 
 ### Excluir autor
-### Substituir o número pelo ID retornado no cadastro
-DELETE http://localhost:3000/autores/12
+### Utilize um autor seu que não possua livros
+DELETE {{baseUrl}}/autores/12
+Authorization: Bearer {{token}}
 
 
-### Verificar se o autor foi excluído
-GET http://localhost:3000/autores/12
+### Verificar se o autor foi excluído (esperado: 404)
+GET {{baseUrl}}/autores/12
+Authorization: Bearer {{token}}
+
 
 
 ### ==========================================
@@ -43,27 +79,31 @@ GET http://localhost:3000/autores/12
 ### ==========================================
 
 ### Listar livros de um autor
-GET http://localhost:3000/autores/1/livros
-
+### Utilize o ID de um autor seu que possua livros
+GET {{baseUrl}}/autores/1/livros
+Authorization: Bearer {{token}}
 
 ### Listar livros de um autor sem livros
-GET http://localhost:3000/autores/6/livros
+### Utilize o ID de um autor seu sem livros
+GET {{baseUrl}}/autores/6/livros
+Authorization: Bearer {{token}}
 
-
-### Buscar livros de autor inexistente
-GET http://localhost:3000/autores/999/livros
+### Buscar livros de autor inexistente (esperado: 404)
+GET {{baseUrl}}/autores/999/livros
+Authorization: Bearer {{token}}
 
 
 ### ==========================================
 ### CENÁRIOS DE ERRO
 ### ==========================================
 
-### ERRO - Buscar autor inexistente
-GET http://localhost:3000/autores/999
+### Buscar autor inexistente (esperado: 404)
+GET {{baseUrl}}/autores/999
+Authorization: Bearer {{token}}
 
-
-### ERRO - Cadastrar autor sem nome
-POST http://localhost:3000/autores
+### Cadastrar autor sem nome (esperado: 400)
+POST {{baseUrl}}/autores
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -72,40 +112,29 @@ Content-Type: application/json
     "ano_nascimento": 1912
 }
 
+### Excluir autor que possui livros (esperado: erro)
+### Utilize um autor seu que possua livros
+DELETE {{baseUrl}}/autores/1
+Authorization: Bearer {{token}}
 
-### ERRO - Excluir autor que possui livros
-DELETE http://localhost:3000/autores/1
-
-
-### ERRO - Buscar autor com ID inválido
-GET http://localhost:3000/autores/abc
+### Buscar autor com ID inválido (esperado: 400)
+GET {{baseUrl}}/autores/abc
+Authorization: Bearer {{token}}
 
 
 ### ==========================================
-### ROTAS GERAIS DA API
+### AUTENTICAÇÃO E AUTORIZAÇÃO
 ### ==========================================
 
-### Verificar rota inicial
-GET http://localhost:3000/
+### Tentar listar autores sem token (esperado: 401)
+GET {{baseUrl}}/autores
 
-
-### Verificar rota inexistente (404)
-GET http://localhost:3000/rota-inexistente
-
-
-
-### Cadastrar autor com usuário autenticado
-POST http://localhost:3000/autores
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcxOTc0NywiZXhwIjoxNzk1NzIzMzQ3fQ.CwGiPGuKMg-NEY9-FMvA_hh7PV58yFj6ipqTzr-a0BI
+### Tentar cadastrar autor sem token (esperado: 401)
+POST {{baseUrl}}/autores
 Content-Type: application/json
 
 {
-    "nome": "Clarisse Lispector",
+    "nome": "Autor sem autenticação",
     "nacionalidade": "Brasileira",
-    "ano_nascimento": 1912
+    "ano_nascimento": 2000
 }
-
-
-### Listar autores do usuário autenticado
-GET http://localhost:3000/autores
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGVyZmlsIjoidXN1YXJpbyIsImlhdCI6MTc5NTcyMDQ0MiwiZXhwIjoxNzk1NzI0MDQyfQ.pS0LZUfjW9g-vTGKueqDa9rWZmq_yMiZ4bPzalYBUms

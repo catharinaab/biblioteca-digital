@@ -1,4 +1,3 @@
-
 export function autorizar(...perfisPermitidos) {
     return (req, res, next) => {
         // Verifica se o usuário possui um perfil permitido

@@ -1,4 +1,3 @@
-
 import db from "../config/database.js";
 
 // Busca um usuário pelo e-mail.
